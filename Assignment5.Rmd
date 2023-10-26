@@ -1,0 +1,68 @@
+---
+title: "Nachiket Nareshkumar Pasrija (000918216)"
+subtitle: "Predictive Data Analytics (DATA-420-A)"
+output:
+  html_document:
+    df_print: paged
+---
+<style>
+body {
+text-align: justify}
+</style>
+
+### __Assignement 5__
+
+```{r,message=FALSE}
+library(tidyverse)
+library(factoextra)
+library(tidyr)
+```
+
+#### __1. Load the dataset mammal_Sleep.csv into a data frame.__
+```{r,message=FALSE}
+mammal <- read.csv("~/mammal_Sleep.csv", header = TRUE)
+```
+<br>
+
+#### __2. Create a new data frame mammalSleep with sleep_total and sleep_rem.__
+```{r,message=FALSE}
+mammalSleep <- mammal[, c("sleep_total", "sleep_rem")]
+mammalSleep
+
+#Checking and Cleaning Data to perform k-means clustering without error
+any(is.na(mammalSleep))
+mammalSleep <- na.omit(mammalSleep)
+mammalSleep
+```
+<br>
+
+#### __3.Fit a k-means clustering model with 4 clusters to the data subset mammalSleep.__
+```{r,message=FALSE}
+clusters <- 4  
+
+kc_model <- kmeans(mammalSleep, centers = clusters)
+kc_model
+
+cluster_assignments <- kc_model$cluster
+
+mammalSleep_with_clusters <- cbind(mammalSleep, Cluster = cluster_assignments)
+mammalSleep_with_clusters
+
+```
+
+Here, we specify the use of four clusters as a requirement. We then apply the __`kmeans()`__ function to perform k-means clustering on the cleaned mammalSleep dataset, specifying four clusters using the 'centers' parameter. The cluster assignments are extracted from the model using __`kmeans_model$cluster`__ and added to a new data frame named __`mammalSleep_with_clusters`__.
+
+<br>
+
+#### __4. Find the centroids of the clusters in the model on the chart (If you can’t figure how to it using fviz_cluster function, you can use plot() or geom_point().__
+
+```{r,message=FALSE}
+centroids <- fviz_cluster(kc_model, data = mammalSleep, geom = "point", 
+                          show.clust.cent = TRUE, 
+                          palette = c("red", "blue", "darkorange", "darkgreen"))
+
+centroids + ggtitle("K-Means Clustering of Mammal Sleep Data") +
+            xlab("Sleep Total") +
+            ylab("Sleep REM")
+```
+
